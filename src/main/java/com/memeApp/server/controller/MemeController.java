@@ -1,5 +1,6 @@
 package com.memeApp.server.controller;
 
+import com.memeApp.server.dto.request.GetMemesRequest;
 import com.memeApp.server.dto.request.UploadMemeRequest;
 import com.memeApp.server.dto.response.UploadMemeResponse;
 import com.memeApp.server.model.meme.Meme;
@@ -32,7 +33,10 @@ public class MemeController {
     ) throws IOException {
         return ResponseEntity.ok(memeService.upload(new UploadMemeRequest(title, user_id, file), token.substring(7)));
     }
-
+    @GetMapping("/get")
+    public ResponseEntity<?> get(@RequestBody GetMemesRequest getMemesRequest){
+        return ResponseEntity.ok(memeService.getMemes(getMemesRequest));
+    }
     @GetMapping(value = "/png/{filePath}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<Resource> downloadPNG(
             @PathVariable String filePath

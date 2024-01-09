@@ -29,7 +29,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/test/**").permitAll()
                         .requestMatchers("/meme/png/**", "/meme/gif/**").permitAll()
-                        .requestMatchers("/meme/upload").hasAuthority(Role.USER.name())
+                        .requestMatchers("/meme/upload", "/meme/get").hasAuthority(Role.USER.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

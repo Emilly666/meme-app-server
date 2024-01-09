@@ -1,10 +1,12 @@
 package com.memeApp.server.service;
 
 import com.memeApp.server.config.JwtService;
+import com.memeApp.server.dto.request.GetMemesRequest;
 import com.memeApp.server.dto.request.UploadMemeRequest;
 import com.memeApp.server.dto.response.UploadMemeResponse;
 import com.memeApp.server.model.meme.Meme;
 import com.memeApp.server.model.meme.MemeRepository;
+import com.memeApp.server.model.tag.Tag;
 import com.memeApp.server.model.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
@@ -15,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -55,6 +59,15 @@ public class MemeService{
     public ByteArrayResource downloadMeme(String fileName) throws IOException {
         return new ByteArrayResource(Files.readAllBytes(Paths.get(
                 "C:\\Users\\kalan\\OneDrive\\Pulpit\\Engineering project\\Memes\\" + fileName )));
+    }
+    public List<Map<Meme, List<Tag>>> getMemes(GetMemesRequest request){
+        if (request.getLastMeme_id() == 0){
+            request.setLastMeme_id(memeRepository.getMaxId());
+        }
+        if(request.getTag_id() == 0){
+
+        }
+        return null;
     }
 }
 
