@@ -21,6 +21,9 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     public AuthenticationResponse register(RegisterRequest registerRequest){
+        if(userRepository.findByEmail(registerRequest.getEmail()).isPresent()){
+            return null;
+        }
         var user = User.builder()
                 .nickname(registerRequest.getNickname())
                 .email(registerRequest.getEmail())

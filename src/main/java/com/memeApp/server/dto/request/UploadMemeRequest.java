@@ -12,6 +12,5 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class UploadMemeRequest {
     private String title;
-    private Integer user_id;
     private MultipartFile image;
 }

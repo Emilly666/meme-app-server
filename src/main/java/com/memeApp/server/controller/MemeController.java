@@ -28,10 +28,9 @@ public class MemeController {
     public ResponseEntity<UploadMemeResponse> upload(
             @RequestParam("image")MultipartFile file,
             @RequestParam("title")String title,
-            @RequestParam("user_id")Integer user_id,
             @RequestHeader("Authorization")String token
     ) throws IOException {
-        return ResponseEntity.ok(memeService.upload(new UploadMemeRequest(title, user_id, file), token.substring(7)));
+        return ResponseEntity.ok(memeService.upload(new UploadMemeRequest(title, file), token.substring(7)));
     }
     @GetMapping("/get")
     public ResponseEntity<?> get(@RequestBody GetMemesRequest getMemesRequest){

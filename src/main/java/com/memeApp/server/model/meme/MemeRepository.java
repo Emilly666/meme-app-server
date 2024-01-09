@@ -14,4 +14,6 @@ public interface MemeRepository extends JpaRepository<Meme, Integer> {
 
     @Query(value = "SELECT * FROM memes WHERE id < :lastMeme_id ORDER BY id DESC LIMIT :memesCount", nativeQuery = true)
     public List<Meme> getNextMemes(Integer lastMeme_id, Integer memesCount);
+    //@Query(value = "SELECT * FROM memes WHERE id < :lastMeme_id ORDER BY id DESC LIMIT :memesCount", nativeQuery = true)
+    //public List<Meme> getNextMemes(Integer lastMeme_id, Integer memesCount, Integer tag_id);
 }

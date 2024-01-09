@@ -13,6 +13,8 @@ spring:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+memesFolder: C:\\Users\\kalan\\OneDrive\\Pulpit\\Engineering project\\Memes\\
+
 #server:
 #  ssl:
 #    key-store-type: PKCS12
