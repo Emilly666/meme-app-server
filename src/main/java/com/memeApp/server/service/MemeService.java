@@ -8,10 +8,14 @@ import com.memeApp.server.model.meme.MemeRepository;
 import com.memeApp.server.model.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,10 +52,9 @@ public class MemeService{
         return null;
 
     }
-    //public byte[] downloadMeme(DownloadMemesRequest request) throws IOException {
-     //   Optional<Meme> meme = memeRepository.findById(request.getMemeId());
-    //    String filePath = meme.get().getFile_path();
-    //    return Files.readAllBytes(new File(filePath).toPath());
-    //}
+    public ByteArrayResource downloadMeme(String fileName) throws IOException {
+        return new ByteArrayResource(Files.readAllBytes(Paths.get(
+                "C:\\Users\\kalan\\OneDrive\\Pulpit\\Engineering project\\Memes\\" + fileName )));
+    }
 }
 
