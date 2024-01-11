@@ -3,9 +3,14 @@ package com.memeApp.server.service;
 import com.memeApp.server.config.JwtService;
 import com.memeApp.server.dto.request.GetMemesRequest;
 import com.memeApp.server.dto.request.UploadMemeRequest;
+import com.memeApp.server.dto.response.GetMemesResponse;
 import com.memeApp.server.dto.response.UploadMemeResponse;
 import com.memeApp.server.model.meme.Meme;
 import com.memeApp.server.model.meme.MemeRepository;
+import com.memeApp.server.model.meme.MemeResponse;
+import com.memeApp.server.model.meme.likes.MemeLikesRepository;
+import com.memeApp.server.model.memeTag.MemeTagRepository;
+import com.memeApp.server.model.tag.Tag;
 import com.memeApp.server.model.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
@@ -17,9 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +33,8 @@ public class MemeService{
     private String FOLDER_PATH;
     private final MemeRepository memeRepository;
     private final UserRepository userRepository;
+    private final MemeTagRepository memeTagRepository;
+    private final MemeLikesRepository memeLikesRepository;
     private final JwtService jwtService;
 
 
@@ -62,15 +68,38 @@ public class MemeService{
     public ByteArrayResource downloadMeme(String fileName) throws IOException {
         return new ByteArrayResource(Files.readAllBytes(Paths.get(FOLDER_PATH + fileName )));
     }
-    public List<Meme> getMemes(GetMemesRequest request){
-        List<Meme> memes = null;
+    public GetMemesResponse getMemes(GetMemesRequest request, Integer id){
+        List<MemeResponse> memesWithTags = new ArrayList<>();
+        List<Meme> memes;
         if (request.getLastMeme_id() == 0){
             request.setLastMeme_id(memeRepository.getMaxId());
         }
         if(request.getTag_id() == 0){
             memes = memeRepository.getNextMemes(request.getLastMeme_id(), request.getCount());
         }
-        return memes;
+        else{
+            memes = memeRepository.getNextMemes(request.getLastMeme_id(), request.getCount(), request.getTag_id());
+        }
+        if(memes != null){
+            for (Meme meme : memes) {
+                Integer value = null;
+                if(id != 0){
+                    value = memeLikesRepository.getValue(id, meme.getId());
+                }
+                List<Object[]> tags = memeTagRepository.getMemeTagsByMemeId(meme.getId());
+                List<Tag> tagsList= new ArrayList<>();
+                for (Object[] object : tags) {
+                    tagsList.add(new Tag((int)object[0], (String)object[1]));
+                }
+                memesWithTags.add(new MemeResponse(
+                        userRepository.findUserById(meme.getUser_id()),
+                        meme,
+                        tagsList,
+                        value
+                        ));
+            }
+        }
+        return new GetMemesResponse(memesWithTags);
     }
 }
 

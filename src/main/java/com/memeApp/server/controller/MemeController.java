@@ -32,9 +32,9 @@ public class MemeController {
     ) throws IOException {
         return ResponseEntity.ok(memeService.upload(new UploadMemeRequest(title, file), token.substring(7)));
     }
-    @GetMapping("/get")
-    public ResponseEntity<?> get(@RequestBody GetMemesRequest getMemesRequest){
-        return ResponseEntity.ok(memeService.getMemes(getMemesRequest));
+    @PostMapping("/get/{id}")
+    public ResponseEntity<?> get(@RequestBody GetMemesRequest getMemesRequest, @PathVariable Integer id){
+        return ResponseEntity.ok(memeService.getMemes(getMemesRequest, id));
     }
     @GetMapping(value = "/png/{filePath}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<Resource> downloadPNG(

@@ -1,5 +1,6 @@
 package com.memeApp.server.model.meme;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,8 @@ public class Meme {
     private Integer id;
     private String file_path;
     private String title;
-    private long user_id;
+    private Integer user_id;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Timestamp add_timestamp = new Timestamp(System.currentTimeMillis());
     private int total_likes = 0;
 }

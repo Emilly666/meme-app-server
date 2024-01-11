@@ -1,7 +1,6 @@
 package com.memeApp.server.dto.response;
 
-import com.memeApp.server.model.meme.Meme;
-import com.memeApp.server.model.tag.Tag;
+import com.memeApp.server.model.meme.MemeResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,8 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetMemeResponse {
-    private List<Meme> memes;
-    private List<List<Tag>> tags;
+public class GetMemesResponse {
+    private List<MemeResponse> memesWithTags;
 
 }

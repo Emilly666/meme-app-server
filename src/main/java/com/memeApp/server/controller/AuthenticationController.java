@@ -22,10 +22,10 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request){
         AuthenticationResponse response = authenticationService.register(request);
-        return ResponseEntity.ok(Objects.requireNonNullElse(response, "User already exist in database"));
+        return ResponseEntity.ok(Objects.requireNonNullElse(response, "Email already used"));
     }
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest request){
+    public ResponseEntity<?> login(@RequestBody LoginRequest request){
         return ResponseEntity.ok(authenticationService.login(request));
     }
 }

@@ -1,6 +1,7 @@
-package com.memeApp.server.model.tag;
+package com.memeApp.server.model.meme.likes;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -9,17 +10,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity()
-@Table(name = "tags")
-public class Tag {
-
+@Table(name = "meme_likes")
+public class MemeLikes {
     @Id
+    @GeneratedValue()
     private Integer id;
-    private String name;
-
-    public Tag(Integer id, String name){
-        this.id = id;
-        this.name = name;
-    }
+    private Integer meme_id;
+    private Integer user_id;
+    private Integer value;
 }
