@@ -7,7 +7,7 @@ import com.memeApp.server.dto.response.GetMemesResponse;
 import com.memeApp.server.dto.response.UploadMemeResponse;
 import com.memeApp.server.model.meme.Meme;
 import com.memeApp.server.model.meme.MemeRepository;
-import com.memeApp.server.model.meme.MemeResponse;
+import com.memeApp.server.dto.response.MemeResponse;
 import com.memeApp.server.model.meme.likes.MemeLikesRepository;
 import com.memeApp.server.model.memeTag.MemeTagRepository;
 import com.memeApp.server.model.tag.Tag;
@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,10 @@ public class MemeService{
 
 
     public UploadMemeResponse upload(UploadMemeRequest request,  String token) throws IOException {
+        String contentType = Files.probeContentType(Path.of(request.getImage().getOriginalFilename()));
+        if(!(contentType.equals("image/gif") || contentType.equals("image/png"))){
+            return null;
+        }
 
         var user = userRepository.findByEmail(jwtService.extractUsername(token)).orElseThrow();
 
@@ -57,13 +62,13 @@ public class MemeService{
 
             Meme meme = new Meme();
             meme.setFile_path(newName);
+            meme.setContent_type(contentType);
             meme.setTitle(request.getTitle());
             meme.setUser_id(user.getId());
             meme = memeRepository.save(meme);
             return new UploadMemeResponse(meme);
         }
         return null;
-
     }
     public ByteArrayResource downloadMeme(String fileName) throws IOException {
         return new ByteArrayResource(Files.readAllBytes(Paths.get(FOLDER_PATH + fileName )));
@@ -82,7 +87,7 @@ public class MemeService{
         }
         if(memes != null){
             for (Meme meme : memes) {
-                Integer value = null;
+                Integer value = 0;
                 if(id != 0){
                     value = memeLikesRepository.getValue(id, meme.getId());
                 }
@@ -91,12 +96,18 @@ public class MemeService{
                 for (Object[] object : tags) {
                     tagsList.add(new Tag((int)object[0], (String)object[1]));
                 }
-                memesWithTags.add(new MemeResponse(
-                        userRepository.findUserById(meme.getUser_id()),
-                        meme,
-                        tagsList,
-                        value
-                        ));
+                memesWithTags.add(MemeResponse.builder()
+                        .id(meme.getId())
+                        .file_path(meme.getFile_path())
+                        .content_type(meme.getContent_type())
+                        .title(meme.getTitle())
+                        .add_timestamp(meme.getAdd_timestamp())
+                        .total_likes(meme.getTotal_likes())
+                        .author_id(meme.getUser_id())
+                        .author_nickname(userRepository.findUserById(meme.getUser_id()).getNickname())
+                        .reactionValue(value)
+                        .tags(tagsList)
+                        .build());
             }
         }
         return new GetMemesResponse(memesWithTags);

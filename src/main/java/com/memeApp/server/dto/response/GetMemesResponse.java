@@ -1,6 +1,5 @@
 package com.memeApp.server.dto.response;
 
-import com.memeApp.server.model.meme.MemeResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

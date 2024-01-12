@@ -3,7 +3,6 @@ package com.memeApp.server.controller;
 import com.memeApp.server.dto.request.GetMemesRequest;
 import com.memeApp.server.dto.request.UploadMemeRequest;
 import com.memeApp.server.dto.response.UploadMemeResponse;
-import com.memeApp.server.model.meme.Meme;
 import com.memeApp.server.service.MemeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -15,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/meme")
@@ -25,12 +23,16 @@ public class MemeController {
     private final MemeService memeService;
 
     @PostMapping("/upload")
-    public ResponseEntity<UploadMemeResponse> upload(
+    public ResponseEntity<?> upload(
             @RequestParam("image")MultipartFile file,
             @RequestParam("title")String title,
             @RequestHeader("Authorization")String token
     ) throws IOException {
-        return ResponseEntity.ok(memeService.upload(new UploadMemeRequest(title, file), token.substring(7)));
+        return ResponseEntity.ok(Objects
+                .requireNonNullElse(
+                        memeService.upload(new UploadMemeRequest(title, file), token.substring(7)),
+                "Meme rejected"
+                ));
     }
     @PostMapping("/get/{id}")
     public ResponseEntity<?> get(@RequestBody GetMemesRequest getMemesRequest, @PathVariable Integer id){
