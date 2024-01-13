@@ -17,10 +17,10 @@ public interface MemeRepository extends JpaRepository<Meme, Integer> {
             "WHERE id < :lastMeme_id ORDER BY id DESC LIMIT :memesCount", nativeQuery = true)
     public List<Meme> getNextMemes(Integer lastMeme_id, Integer memesCount);
 
-    @Query(value = "SELECT m.id, m.add_timestamp, m.file_path, m.title, m.total_likes, m.user_id  " +
+    @Query(value = "SELECT m.id, m.add_timestamp, m.file_path, m.content_type, m.title, m.total_likes, m.user_id  " +
             "FROM memes m " +
             "JOIN meme_tags s ON m.id=s.meme_id " +
             "JOIN tags t ON t.id=s.tag_id " +
-            "WHERE id < :lastMeme_id AND t.id=:tag_id ORDER BY id DESC LIMIT :memesCount", nativeQuery = true)
+            "WHERE m.id < :lastMeme_id AND t.id=:tag_id ORDER BY m.id DESC LIMIT :memesCount", nativeQuery = true)
     public List<Meme> getNextMemes(Integer lastMeme_id, Integer memesCount, Integer tag_id);
 }

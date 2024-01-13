@@ -1,5 +1,6 @@
 package com.memeApp.server.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.memeApp.server.config.JwtService;
 import com.memeApp.server.dto.request.GetMemesRequest;
 import com.memeApp.server.dto.request.UploadMemeRequest;
@@ -9,8 +10,10 @@ import com.memeApp.server.model.meme.Meme;
 import com.memeApp.server.model.meme.MemeRepository;
 import com.memeApp.server.dto.response.MemeResponse;
 import com.memeApp.server.model.meme.likes.MemeLikesRepository;
+import com.memeApp.server.model.memeTag.MemeTag;
 import com.memeApp.server.model.memeTag.MemeTagRepository;
 import com.memeApp.server.model.tag.Tag;
+import com.memeApp.server.model.tag.TagRepository;
 import com.memeApp.server.model.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
@@ -24,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -36,6 +40,7 @@ public class MemeService{
     private final UserRepository userRepository;
     private final MemeTagRepository memeTagRepository;
     private final MemeLikesRepository memeLikesRepository;
+    private final TagRepository tagRepository;
     private final JwtService jwtService;
 
 
@@ -60,12 +65,31 @@ public class MemeService{
             }
             request.getImage().transferTo(f);
 
+            ObjectMapper mapper = new ObjectMapper();
+            String[] tagsArray = mapper.readValue(request.getTags(), String[].class);
+            List<String> tagsList = Arrays.asList(tagsArray);
+            List<Tag> memeTags = new ArrayList<>();
+            for (String s : tagsList) {
+                if (tagRepository.findByName(s).isEmpty()) {
+                    Tag tag = new Tag();
+                    tag.setName(s);
+                    memeTags.add(tagRepository.save(tag));
+                } else {
+                    memeTags.add(tagRepository.findTagByName(s));
+                }
+            }
             Meme meme = new Meme();
             meme.setFile_path(newName);
             meme.setContent_type(contentType);
             meme.setTitle(request.getTitle());
             meme.setUser_id(user.getId());
             meme = memeRepository.save(meme);
+            for(int i = 0; i < memeTags.size(); i++){
+                MemeTag memeTag = new MemeTag();
+                memeTag.setMeme_id(meme.getId());
+                memeTag.setTag_id(memeTags.get(i).getId());
+                memeTagRepository.save(memeTag);
+            }
             return new UploadMemeResponse(meme);
         }
         return null;
@@ -90,6 +114,9 @@ public class MemeService{
                 Integer value = 0;
                 if(id != 0){
                     value = memeLikesRepository.getValue(id, meme.getId());
+                }
+                if(value == null){
+                    value = 0;
                 }
                 List<Object[]> tags = memeTagRepository.getMemeTagsByMemeId(meme.getId());
                 List<Tag> tagsList= new ArrayList<>();

@@ -13,4 +13,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class UploadMemeRequest {
     private String title;
     private MultipartFile image;
+    private String tags;
 }

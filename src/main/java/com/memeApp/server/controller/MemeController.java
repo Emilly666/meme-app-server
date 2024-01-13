@@ -26,11 +26,12 @@ public class MemeController {
     public ResponseEntity<?> upload(
             @RequestParam("image")MultipartFile file,
             @RequestParam("title")String title,
+            @RequestParam("tags")String tags,
             @RequestHeader("Authorization")String token
     ) throws IOException {
         return ResponseEntity.ok(Objects
                 .requireNonNullElse(
-                        memeService.upload(new UploadMemeRequest(title, file), token.substring(7)),
+                        memeService.upload(new UploadMemeRequest(title, file, tags), token.substring(7)),
                 "Meme rejected"
                 ));
     }
