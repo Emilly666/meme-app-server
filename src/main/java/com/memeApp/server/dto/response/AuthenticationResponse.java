@@ -16,5 +16,4 @@ public class AuthenticationResponse {
     private String nickname;
     private String email;
     private String password;
-    private String pictureURL;
 }

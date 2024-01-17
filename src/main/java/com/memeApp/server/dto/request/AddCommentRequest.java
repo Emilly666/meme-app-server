@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetMemesRequest {
-    private Integer lastMeme_id;
-    private Integer tag_id;
-    private Integer count;
-    private Integer user_id;
+public class AddCommentRequest {
+    private String Comment;
+    private Integer meme_id;
 }

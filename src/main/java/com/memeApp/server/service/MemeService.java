@@ -97,7 +97,7 @@ public class MemeService{
     public ByteArrayResource downloadMeme(String fileName) throws IOException {
         return new ByteArrayResource(Files.readAllBytes(Paths.get(FOLDER_PATH + fileName )));
     }
-    public GetMemesResponse getMemes(GetMemesRequest request, Integer id){
+    public GetMemesResponse getMemes(GetMemesRequest request){
         List<MemeResponse> memesWithTags = new ArrayList<>();
         List<Meme> memes;
         if (request.getLastMeme_id() == 0){
@@ -112,8 +112,8 @@ public class MemeService{
         if(memes != null){
             for (Meme meme : memes) {
                 Integer value = 0;
-                if(id != 0){
-                    value = memeLikesRepository.getValue(id, meme.getId());
+                if(request.getUser_id() != 0){
+                    value = memeLikesRepository.getValue(request.getUser_id(), meme.getId());
                 }
                 if(value == null){
                     value = 0;

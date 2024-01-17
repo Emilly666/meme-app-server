@@ -26,6 +26,7 @@ public class AuthenticationController {
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request){
-        return ResponseEntity.ok(authenticationService.login(request));
+        AuthenticationResponse response = authenticationService.login(request);
+        return ResponseEntity.ok(Objects.requireNonNullElse(response, "Incorrect e-mail or password"));
     }
 }

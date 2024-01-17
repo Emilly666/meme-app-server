@@ -2,11 +2,9 @@ package com.memeApp.server.controller;
 
 import com.memeApp.server.dto.request.GetMemesRequest;
 import com.memeApp.server.dto.request.UploadMemeRequest;
-import com.memeApp.server.dto.response.UploadMemeResponse;
 import com.memeApp.server.service.MemeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,35 +26,44 @@ public class MemeController {
             @RequestParam("title")String title,
             @RequestParam("tags")String tags,
             @RequestHeader("Authorization")String token
-    ) throws IOException {
-        return ResponseEntity.ok(Objects
-                .requireNonNullElse(
-                        memeService.upload(new UploadMemeRequest(title, file, tags), token.substring(7)),
-                "Meme rejected"
-                ));
+    ){
+        try{
+            return ResponseEntity.ok(Objects
+                    .requireNonNullElse(
+                            memeService.upload(new UploadMemeRequest(title, file, tags), token.substring(7)),
+                            "Meme rejected"
+                    ));
+        }catch (Exception e){
+            return null;
+        }
+
     }
-    @PostMapping("/get/{id}")
-    public ResponseEntity<?> get(@RequestBody GetMemesRequest getMemesRequest, @PathVariable Integer id){
-        return ResponseEntity.ok(memeService.getMemes(getMemesRequest, id));
+    @PostMapping("/get")
+    public ResponseEntity<?> get(@RequestBody GetMemesRequest getMemesRequest){
+        return ResponseEntity.ok(memeService.getMemes(getMemesRequest));
     }
     @GetMapping(value = "/png/{filePath}", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<Resource> downloadPNG(
-            @PathVariable String filePath
-    ) throws IOException {
-        ByteArrayResource inputStream = memeService.downloadMeme(filePath);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .contentLength(inputStream.contentLength())
-                .body(inputStream);
+    public ResponseEntity<?> downloadPNG(@PathVariable String filePath) {
+        try {
+            ByteArrayResource inputStream = memeService.downloadMeme(filePath);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .contentLength(inputStream.contentLength())
+                    .body(inputStream);
+        }catch(IOException e) {
+            return null;
+        }
     }
     @GetMapping(value = "/gif/{filePath}", produces = MediaType.IMAGE_GIF_VALUE)
-    public ResponseEntity<Resource> downloadGIF(
-            @PathVariable String filePath
-    ) throws IOException {
-        ByteArrayResource inputStream = memeService.downloadMeme(filePath);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .contentLength(inputStream.contentLength())
-                .body(inputStream);
+    public ResponseEntity<?> downloadGIF( @PathVariable String filePath ) {
+        try {
+            ByteArrayResource inputStream = memeService.downloadMeme(filePath);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .contentLength(inputStream.contentLength())
+                    .body(inputStream);
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

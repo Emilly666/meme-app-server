@@ -10,6 +10,7 @@ import com.memeApp.server.model.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,6 @@ public class AuthenticationService {
         var user = User.builder()
                 .nickname(registerRequest.getNickname())
                 .email(registerRequest.getEmail())
-                .pictureURL(null)
                 .role(Role.USER)
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
@@ -39,15 +39,19 @@ public class AuthenticationService {
                 .nickname(user.getNickname())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .pictureURL(user.getPictureURL())
                 .build();
     }
     public AuthenticationResponse login(LoginRequest loginRequest){
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginRequest.getEmail(),
-                loginRequest.getPassword()
-            )
-        );
+        try{
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
+        }
+        catch (AuthenticationException e){
+            return null;
+        }
         var user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow();
         var token = jwtService.generateToken(user);
@@ -57,7 +61,6 @@ public class AuthenticationService {
                 .nickname(user.getNickname())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .pictureURL(user.getPictureURL())
                 .build();
     }
 }

@@ -27,9 +27,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/test/**").permitAll()
-                        .requestMatchers("/meme/png/**", "/meme/gif/**", "/meme/get/**").permitAll()
-                        .requestMatchers("/meme/upload").hasAuthority(Role.USER.name())
+                        .requestMatchers("/meme/png/**", "/meme/gif/**", "/meme/get", "comment/get").permitAll()
+                        .requestMatchers("/meme/upload", "/like", "/comment/add", "/users/**").hasAuthority(Role.USER.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
