@@ -34,4 +34,7 @@ public interface MemeRepository extends JpaRepository<Meme, Integer> {
     @Modifying
     @Query(value = "UPDATE memes SET total_likes=total_likes-1 WHERE id=:meme_id", nativeQuery = true)
     public void removeLike(Integer meme_id);
+
+    @Query(value = "SELECT count(id) FROM memes WHERE user_id=:user_id", nativeQuery = true)
+    public int getTotalMemesUploaded(Integer user_id);
 }

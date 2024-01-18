@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
-    @GetMapping("/get")
+    @PostMapping("/get")
     public ResponseEntity<?> get(@RequestBody LikeRequest commentRequest){
         return ResponseEntity.ok(commentService.getComments(commentRequest.getMeme_id()));
     }

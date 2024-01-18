@@ -13,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetCommentResponse {
-    private List<MemeComment> commentsList;
+    private List<CommentResponse> commentsList;
 }

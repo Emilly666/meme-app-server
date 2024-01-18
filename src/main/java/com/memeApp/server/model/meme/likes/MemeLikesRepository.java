@@ -16,4 +16,18 @@ public interface MemeLikesRepository extends JpaRepository<MemeLikes, Integer> {
     @Modifying
     @Query(value = "DELETE FROM meme_likes WHERE meme_id=:meme_id AND user_id=:user_id", nativeQuery = true)
     public void deleteBy(Integer meme_id, Integer user_id);
+
+    @Query(value = "SELECT count(id) FROM meme_likes WHERE user_id=:user_id AND value=1", nativeQuery = true)
+    public Integer getTotalLikesGiven(Integer user_id);
+    @Query(value = "SELECT count(id) FROM meme_likes WHERE user_id=:user_id AND value=-1", nativeQuery = true)
+    public Integer getTotalDislikesGiven(Integer user_id);
+
+    @Query(value = "SELECT count(l.id) FROM meme_likes l " +
+            "JOIN memes m ON m.id=l.meme_id " +
+            "WHERE m.user_id=:user_id AND l.value=1", nativeQuery = true)
+    public Integer getTotalLikesReceived(Integer user_id);
+    @Query(value = "SELECT count(l.id) FROM meme_likes l " +
+            "JOIN memes m ON m.id=l.meme_id " +
+            "WHERE m.user_id=:user_id AND l.value=-1", nativeQuery = true)
+    public Integer getTotalDislikesReceived(Integer user_id);
 }
